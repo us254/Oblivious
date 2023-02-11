@@ -1,38 +1,49 @@
-user nginx;
-worker_processes auto;
-
-error_log /var/log/nginx/error.log notice;
-pid /var/run/nginx.pid;
-
-events {
-    worker_connections 1024;
+server {
+    listen 80;
+    listen [::]:80;
+    server_name example.com www.example.com; #Replace with your own domain name
+    return 302 https://$server_name$request_uri;
 }
 
-http {
-    access_log /var/log/nginx/access.log;
-    
-    server {
-        listen 443 ssl http2;
-        server_name example.com;
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
 
-        ssl_certificate /path/to/example.cer;
-        ssl_certificate_key /path/to/example.key;
-        ssl_protocols TLSv1.2 TLSv1.3;
-        ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+  ssl_certificate       /etc/ssl/yourdomain_cert.pem;
+  ssl_certificate_key   /etc/ssl/youdomain_key.pem;
+#Authenticated Origin Pull is optional. Please refer to https://developers.cloudflare.com/ssl/origin/authenticated-origin-pull/
+#ssl_client_certificate  /etc/ssl/origin-pull-ca.pem;
+#ssl_verify_client on;
+  ssl_session_timeout 1d;
+  ssl_session_cache shared:MozSSL:10m;
+  ssl_session_tickets off;
 
-        location /path {
-            if ($http_upgrade != "websocket") {
-                return 404;
-            }
-            proxy_pass http://127.0.0.1:1234;
-            proxy_redirect off;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_read_timeout 52w;
-        }
+  ssl_protocols         TLSv1.2 TLSv1.3;
+  ssl_ciphers           ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+  ssl_prefer_server_ciphers off;
+
+  server_name           example.com www.example.com; #Replace with your own domain name
+  location /nameofpath { #Replace with your own path name
+    if ($http_upgrade != "websocket") {
+        return 404;
     }
+    proxy_redirect off;
+    proxy_pass http://127.0.0.1:12345; #Here port 12345 is for websocket purpose. Replace 12345 with your own port.
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  }
+  location / {
+    proxy_redirect off;
+    proxy_pass http://127.0.0.1:3000; #Here port 3000 is for normal web service, such as Wordpress. For example, you can set port forwarding like 127.0.0.1:3000:80, in Wordpress docker-compose.yml
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  }
 }
