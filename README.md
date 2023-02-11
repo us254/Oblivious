@@ -76,7 +76,7 @@ http://nginx.org/en/linux_packages.html#Ubuntu
 3. Download [Configuration](https://github.com/chika0801/Xray-examples/tree/main/VLESS-TCP-XTLS-Vision)
 
 ```
-curl -Lo /usr/local/etc/xray/config.json https://raw.githubusercontent.com/chika0801/Xray-examples/main/VLESS-TCP-XTLS-Vision/config_server_with_fallbacks.json && curl -Lo /etc /nginx/nginx.conf https://raw.githubusercontent.com/chika0801/Xray-examples/main/VLESS-TCP-XTLS-Vision/nginx.conf
+curl -Lo /usr/local/etc/xray/config.json https://raw.githubusercontent.com/chika0801/Xray-examples/main/VLESS-TCP-XTLS-Vision/config_server_with_fallbacks.json && curl -Lo /etc/nginx/nginx.conf https://raw.githubusercontent.com/chika0801/Xray-examples/main/VLESS-TCP-XTLS-Vision/nginx.conf
 ```
 
 4. Download [Enhanced Routing Rules File](https://github.com/Loyalsoldier/v2ray-rules-dat)
