@@ -1,5 +1,5 @@
 <details>
-<summary>Click to see </summary>
+<summary>Click to see BBR,sshd_config,ufw,update for ubuntu vps</summary>
 
 `apt-get update; apt-get upgrade -y; apt-get install curl wget unzip git socat fail2ban -y; cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local; apt-get install unattended-upgrades apt-listchanges -y; echo | dpkg-reconfigure -plow unattended-upgrades`
 
@@ -16,5 +16,18 @@
 - ufw deny 22
   ```
   
+  ```
+- sudo nano /etc/ssh/sshd_config
+- ClientAliveInterval 1800
+- ClientAliveCountMax 10
+- sudo service ssh restart
+  ```
   
+   BBR
+  ```
+- nano /etc/sysctl.conf
+- net.core.default_qdisc=fq
+- net.ipv4.tcp_congestion_control=bbr
+- reboot
+  ```
 </details>
