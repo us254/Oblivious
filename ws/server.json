@@ -5,12 +5,12 @@
   "inbounds": [
     {
       "listen": "127.0.0.1",
-      "port": 1234 ,
+      "port": 2053 ,
       "protocol": "vless",
       "settings": {
         "clients": [
           {
-            "id": "" // 填写你的 UUID
+            "id": "" 
           }
         ],
         "decryption": "none"
@@ -18,7 +18,7 @@
       "streamSettings": {
         "network": "ws",
         "wsSettings": {
-          "path": "/Path2WS" // 填写你的 path
+          "path": "/Path2WS" 
         }
       },
 			"sniffing": {
